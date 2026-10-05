@@ -741,6 +741,8 @@
         const k = 1 - Math.exp(-dt * 3.2);
         this.accent.lerp(this.accentTarget, k);
         this._applyAccent();
+        const settleBack = Math.exp(-dt * 0.9);   // ~3s to drift back to centre once the cursor stops
+        this.mouse.tx *= settleBack; this.mouse.ty *= settleBack;
         const mk = 1 - Math.exp(-dt * 3.0);
         this.mouse.x += (this.mouse.tx - this.mouse.x) * mk;
         this.mouse.y += (this.mouse.ty - this.mouse.y) * mk;
@@ -755,14 +757,13 @@
         this.canPour.rotation.z = -this.rig.tilt;
         const mouseAmt = 1 - pourAmt * 0.8;
         this.canTilt.rotation.x = (-this.mouse.y * 0.28 + Math.sin(rt * 0.7) * 0.03) * mouseAmt;
-        this.canTilt.rotation.z = (-this.mouse.x * 0.14 + 0.06) * mouseAmt;
+        this.canTilt.rotation.z = -this.mouse.x * 0.14 * mouseAmt;
         this.canTilt.rotation.y = this.mouse.x * 0.45 * mouseAmt;
         this.canTilt.position.y = Math.sin(rt * 1.1) * 0.08 * mouseAmt + Math.sin(rt * 40) * 0.008 * fx.turbo;
 
-        // idle spin slows to a stop as the tab opens, settling with the opening facing the pour side
-        this.idle += dt * 0.22 * fx.speed * motion * (1 - S.open);
-        const settle = Math.PI / 2 + Math.round((this.idle - Math.PI / 2) / TAU) * TAU;
-        this.canSpin.rotation.y = this.idle + (settle - this.idle) * openAmt + this.rig.spin;
+        // Rest pose: label faces the camera with a slight sway. While opening, turn the opening toward the pour side.
+        const sway = Math.sin(rt * 0.6) * 0.08 * (1 + fx.turbo) * (1 - openAmt) * motion;
+        this.canSpin.rotation.y = sway + openAmt * (Math.PI / 2) + this.rig.spin;
         this.tabPivot.rotation.x = smooth(0, 0.6, S.open) * 1.25 - smooth(0.6, 1, S.open) * 1.05;
         this.hole.visible = S.open > 0.35;
         const hs = smooth(0.35, 0.7, S.open); this.hole.scale.set(hs, hs * 0.75, 1);
