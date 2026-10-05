@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>AURA KINETIX — Beyond Hydration</title>
+<meta name="description" content="AURA KINETIX: a zero-sugar nootropic energy drink. Three formulas, one kinetic core." />
+<meta name="theme-color" content="#080810" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { theme: { extend: { fontFamily: { display: ['Unbounded', 'Arial Black', 'sans-serif'], body: ['Figtree', 'system-ui', 'sans-serif'] } } } };
+</script>
+
+<style>
+  :root { --accent: 0 243 255; --bg: #080810; }
+  html, body { background: var(--bg); color: #eef0ff; }
+  body { font-family: 'Figtree', system-ui, sans-serif; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+  .font-display { font-family: 'Unbounded', 'Arial Black', sans-serif; }
+  ::selection { background: rgb(var(--accent) / .35); color: #fff; }
+  :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 3px; border-radius: 10px; }
+
+  /* ---------- Layer stack: ambient < backdrop type < WebGL (can + liquid) < vignette < page content ---------- */
+  .ambient { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(55vmax 45vmax at 50% 45%, rgb(var(--accent) / .14), transparent 62%), var(--bg); }
+  .bg-type { position: fixed; inset: 0; z-index: 1; pointer-events: none; display: grid; place-items: center; will-change: opacity, transform; }
+  #webgl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 2; pointer-events: none; display: block; will-change: transform, filter; }
+  .vignette { position: fixed; inset: 0; z-index: 3; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(8,8,16,.5) 85%, rgba(8,8,16,.85) 100%); }
+  .vignette::after { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity .6s;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,.03) 0 1px, transparent 1px 3px); }
+  .shock-layer { position: fixed; inset: 0; z-index: 4; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at 50% 50%, rgb(var(--accent) / .5), transparent 55%); }
+  .grain { position: fixed; inset: -50%; z-index: 5; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  main { position: relative; z-index: 10; }
+
+  /* ---------- Loader ---------- */
+  #loader { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: var(--bg); transition: opacity .8s ease, visibility .8s; }
+  body.loaded #loader { opacity: 0; visibility: hidden; }
+  .loader-bar { width: 160px; height: 2px; background: rgba(255,255,255,.08); overflow: hidden; border-radius: 2px; margin-top: 18px; }
+  .loader-bar span { display: block; height: 100%; width: 40%; background: rgb(var(--accent)); box-shadow: 0 0 14px rgb(var(--accent)); animation: load 1.1s ease-in-out infinite; }
+  @keyframes load { from { transform: translateX(-100%); } to { transform: translateX(260%); } }
+
+  /* ---------- Glass ---------- */
+  .glass { background: linear-gradient(135deg, rgba(255,255,255,.075), rgba(255,255,255,.018)); border: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(18px) saturate(150%); -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 70px -36px rgb(var(--accent) / .45); }
+  .glass-panel { border-radius: 28px; background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.015) 45%, rgb(var(--accent) / .05));
+    border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(22px) saturate(160%); -webkit-backdrop-filter: blur(22px) saturate(160%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 40px 120px -50px rgb(var(--accent) / .55); }
+  .accent-text { color: rgb(var(--accent)); text-shadow: 0 0 28px rgb(var(--accent) / .45); }
+  .icon-btn { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 12px; color: rgba(255,255,255,.7); transition: background .3s, color .3s; }
+  .icon-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+  /* ---------- Backdrop headline (sits behind the can) ---------- */
+  .kinetic { font-family: 'Unbounded', 'Arial Black', sans-serif; font-weight: 800; letter-spacing: -.04em; line-height: .86; text-align: center; perspective: 900px;
+    font-size: clamp(2.6rem, 12.4vw, 13rem); }
+  .kinetic .line { display: block; white-space: nowrap; animation: drift 9s ease-in-out infinite; }
+  .kinetic .line + .line { animation-delay: -4.5s; }
+  @keyframes drift { 0%, 100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-12px,0); } }
+  .kinetic .ch { display: inline-block; transform-origin: 50% 100%; color: rgba(238,240,255,.92); }
+  .kinetic .outline .ch { color: transparent; -webkit-text-stroke: 1.5px rgb(var(--accent)); text-shadow: 0 0 40px rgb(var(--accent) / .25); }
+  body:not(.loaded) .kinetic .ch { opacity: 0; }
+  body.loaded .kinetic .ch { animation: letterIn 1.3s cubic-bezier(.16,1,.3,1) backwards; animation-delay: calc(var(--d) * 1s + var(--i) * .05s); }
+  @keyframes letterIn { from { opacity: 0; transform: translateY(.5em) rotateX(-80deg); filter: blur(12px); } to { opacity: 1; transform: none; filter: none; } }
+  body.turbo.loaded .kinetic .ch { animation: jitter .14s steps(2) infinite; animation-delay: calc(var(--i) * -.03s); }
+  @keyframes jitter { 0% { transform: translate(0,0); } 50% { transform: translate(2px,-1px); } 100% { transform: translate(-1px,2px); } }
+
+  .scroll-hint { display: flex; flex-direction: column; align-items: center; gap: .9rem; font-size: .8rem; color: rgba(255,255,255,.55); }
+  .hint-line { width: 1px; height: 46px; background: rgba(255,255,255,.15); position: relative; overflow: hidden; }
+  .hint-line::after { content: ''; position: absolute; left: -1px; width: 3px; height: 14px; border-radius: 3px; background: rgb(var(--accent)); box-shadow: 0 0 10px rgb(var(--accent)); animation: dripdown 1.8s cubic-bezier(.6,0,.4,1) infinite; }
+  @keyframes dripdown { from { top: -14px; } to { top: 46px; } }
+
+  /* ---------- Benefits (rendered over the poured liquid) ---------- */
+  .on-liquid { text-shadow: 0 2px 24px rgba(8,8,16,.55); }
+  .rise { opacity: 0; transform: translateY(48px) scale(.97); filter: blur(8px); transition: opacity 1s ease, transform 1.2s cubic-bezier(.16,1,.3,1), filter 1s ease; transition-delay: calc(var(--i, 0) * 90ms); }
+  .rise.in { opacity: 1; transform: none; filter: none; }
+  .ing-row { border-top: 1px solid rgba(255,255,255,.18); }
+
+  /* ---------- Flavors ---------- */
+  .tab-btn { display: flex; align-items: center; gap: .6rem; padding: .7rem 1rem; border-radius: 14px; border: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.6); font-size: .85rem; font-weight: 600; transition: all .35s; }
+  .tab-btn:hover { color: #fff; border-color: rgba(255,255,255,.2); }
+  .tab-btn[aria-selected="true"] { color: #fff; border-color: var(--c); background: color-mix(in srgb, var(--c) 12%, transparent); box-shadow: 0 0 30px -10px var(--c); }
+  .swatch { width: 10px; height: 10px; border-radius: 50%; background: var(--c); box-shadow: 0 0 12px var(--c); flex: none; }
+  .panel-swap { animation: panelIn .6s cubic-bezier(.16,1,.3,1); }
+  @keyframes panelIn { from { opacity: 0; transform: translateY(10px); filter: blur(6px); } to { opacity: 1; transform: none; filter: none; } }
+  .radar-shape { fill: rgb(var(--accent) / .18); stroke: rgb(var(--accent)); stroke-width: 1.5; filter: drop-shadow(0 0 8px rgb(var(--accent) / .6)); }
+  .radar-dot { fill: rgb(var(--accent)); }
+  .radar-label { fill: rgba(255,255,255,.55); font-size: 10px; font-family: 'Figtree'; font-weight: 600; }
+
+  /* ---------- CTA ---------- */
+  .cta-title { font-size: clamp(2.2rem, 6.5vw, 5.8rem); line-height: .92; font-weight: 800; letter-spacing: -.03em;
+    background: linear-gradient(180deg, #fff 30%, rgb(var(--accent)) 150%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .magnet-zone { display: inline-block; padding: 36px; margin: -36px; }
+  .magnetic { position: relative; overflow: hidden; border-radius: 999px; padding: 1.15rem 2.2rem; background: rgb(var(--accent)); color: #080810; font-family: 'Unbounded'; font-weight: 600; font-size: .95rem; letter-spacing: .03em;
+    box-shadow: 0 0 0 1px rgb(var(--accent) / .6), 0 20px 70px -14px rgb(var(--accent) / .85); will-change: transform; }
+  .magnetic::before { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255,255,255,.8), transparent); transform: skewX(-20deg); animation: sweep 3.4s ease-in-out infinite; }
+  .magnetic::after { content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity .3s; background: radial-gradient(130px circle at var(--sx, 50%) var(--sy, 50%), rgba(255,255,255,.55), transparent 60%); mix-blend-mode: soft-light; }
+  .magnetic:hover::after { opacity: 1; }
+  @keyframes sweep { 0% { left: -60%; } 55%, 100% { left: 130%; } }
+  .field { width: 100%; padding: 1.05rem 1.3rem; border-radius: 999px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); color: #fff; outline: none; transition: border-color .3s, box-shadow .3s; }
+  .field::placeholder { color: rgba(255,255,255,.4); }
+  .field:focus { border-color: rgb(var(--accent)); box-shadow: 0 0 0 4px rgb(var(--accent) / .15); }
+
+  /* ---------- Dock ---------- */
+  .dock { display: flex; align-items: center; gap: .3rem; padding: .35rem; border-radius: 20px; }
+  .dock-tabs { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); }
+  .dock-indicator { position: absolute; top: 0; bottom: 0; left: 0; width: calc(100% / 3); border-radius: 14px; background: rgb(var(--accent) / .14);
+    box-shadow: inset 0 0 0 1px rgb(var(--accent) / .5), 0 0 26px -6px rgb(var(--accent) / .7); transition: transform .55s cubic-bezier(.34,1.3,.64,1); }
+  .dock-item { position: relative; z-index: 1; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; }
+  .dock-item .swatch { width: 12px; height: 12px; transition: transform .3s; }
+  .dock-item:hover .swatch { transform: scale(1.25); }
+  .dock-sep { width: 1px; height: 26px; background: rgba(255,255,255,.12); margin-inline: .15rem; }
+  .dock-turbo { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; color: rgba(255,255,255,.65); transition: all .35s; }
+  .dock-turbo:hover { color: #fff; background: rgba(255,255,255,.06); }
+  .dock-turbo.on { color: #080810; background: rgb(var(--accent)); box-shadow: 0 0 26px rgb(var(--accent)); }
+
+  /* ---------- Turbo effects ---------- */
+  body.turbo #webgl { animation: warp .9s ease-in-out infinite alternate; }
+  @keyframes warp { from { transform: scale(1); filter: saturate(1.3) contrast(1.05); } to { transform: scale(1.018) skewX(-.35deg); filter: saturate(1.7) contrast(1.12) hue-rotate(-6deg); } }
+  body.turbo .vignette { animation: vpulse .42s ease-in-out infinite alternate; }
+  body.turbo .vignette::after { opacity: 1; }
+  @keyframes vpulse { from { box-shadow: inset 0 0 120px rgb(var(--accent) / .15); } to { box-shadow: inset 0 0 260px rgb(var(--accent) / .42); } }
+  body.shock .shock-layer { animation: shock .75s ease-out; }
+  @keyframes shock { 0% { opacity: .6; transform: scale(.5); } 100% { opacity: 0; transform: scale(1.8); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .kinetic .line, body.loaded .kinetic .ch, body.turbo.loaded .kinetic .ch, body.turbo #webgl, body.turbo .vignette, .magnetic::before, .hint-line::after { animation: none !important; }
+    .rise { transition: opacity .4s ease; transform: none; filter: none; }
+  }
+</style>
+</head>
+
+<body>
+  <div class="ambient"></div>
+  <canvas id="webgl" aria-hidden="true"></canvas>
+  <div class="vignette"></div>
+  <div class="shock-layer"></div>
+  <div class="grain"></div>
+
+  <div id="loader" role="status" aria-live="polite">
+    <div class="text-center">
+      <div class="font-display text-sm tracking-[0.35em] text-white/80">AURA KINETIX</div>
+      <div class="loader-bar mx-auto"><span></span></div>
+    </div>
+  </div>
+
+  <div id="root"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+
+  <!-- ===================== Shared data ===================== -->
+  <script>
+    window.AURA_FLAVORS = [
+      { id: 'volt', code: '01', name: 'Volt Cyberberry', hex: '#00f3ff', tagline: 'Raw electric focus.', focus: 'cognitive speed',
+        blurb: 'Blackcurrant and blue raspberry over a cold mineral finish. Built for deep work and the last hour before a deadline.',
+        profile: { Focus: 96, Energy: 78, Recovery: 42, Hydration: 70, Endurance: 58 } },
+      { id: 'plasma', code: '02', name: 'Plasma Dragonfruit', hex: '#ff0055', tagline: 'Cellular regeneration.', focus: 'metabolic surge',
+        blurb: 'Red pitaya, hibiscus and a sharp lime edge. Tuned for recovery days and the session after the session.',
+        profile: { Focus: 62, Energy: 74, Recovery: 95, Hydration: 84, Endurance: 71 } },
+      { id: 'solar', code: '03', name: 'Solar Citrus', hex: '#ffaa00', tagline: 'Pure kinetic energy.', focus: 'physical output',
+        blurb: 'Blood orange, yuzu and ginger heat. For lifting, running and anything measured in watts.',
+        profile: { Focus: 68, Energy: 97, Recovery: 60, Hydration: 76, Endurance: 92 } }
+    ];
+  </script>
+
+  <!-- ===================== Web Audio synth ===================== -->
+  <script>
+    window.AuraAudio = {
+      ctx: null,
+      ensure() {
+        if (!this.ctx) {
+          const AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          this.ctx = new AC();
+          this.master = this.ctx.createGain(); this.master.gain.value = 0.55;
+          const comp = this.ctx.createDynamicsCompressor();
+          this.master.connect(comp); comp.connect(this.ctx.destination);
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      },
+      _noise(dur) {
+        const ctx = this.ctx, len = Math.floor(ctx.sampleRate * dur);
+        const buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+        for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+        const src = ctx.createBufferSource(); src.buffer = buf; return src;
+      },
+      burst(on) {
+        const ctx = this.ensure(); if (!ctx) return;
+        const now = ctx.currentTime, dur = on ? 0.95 : 0.75, f0 = on ? 70 : 900, f1 = on ? 1400 : 45;
+        const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.Q.value = 9;
+        lp.frequency.setValueAtTime(on ? 300 : 5000, now); lp.frequency.exponentialRampToValueAtTime(on ? 6500 : 180, now + dur * 0.7);
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.26, now + 0.04); g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+        lp.connect(g); g.connect(this.master);
+        const saw = ctx.createOscillator(); saw.type = 'sawtooth';
+        saw.frequency.setValueAtTime(f0, now); saw.frequency.exponentialRampToValueAtTime(f1, now + dur * 0.8);
+        const sq = ctx.createOscillator(); sq.type = 'square'; sq.detune.value = 14;
+        sq.frequency.setValueAtTime(f0 * 1.5, now); sq.frequency.exponentialRampToValueAtTime(f1 * 1.5, now + dur * 0.8);
+        const sqg = ctx.createGain(); sqg.gain.value = 0.35; saw.connect(lp); sq.connect(sqg); sqg.connect(lp);
+        const sub = ctx.createOscillator(); sub.type = 'sine';
+        sub.frequency.setValueAtTime(on ? 120 : 80, now); sub.frequency.exponentialRampToValueAtTime(32, now + 0.5);
+        const sg = ctx.createGain(); sg.gain.setValueAtTime(0.0001, now); sg.gain.exponentialRampToValueAtTime(0.75, now + 0.02); sg.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+        sub.connect(sg); sg.connect(this.master);
+        const noise = this._noise(dur);
+        const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.2;
+        bp.frequency.setValueAtTime(on ? 600 : 7000, now); bp.frequency.exponentialRampToValueAtTime(on ? 9000 : 300, now + dur);
+        const ng = ctx.createGain(); ng.gain.setValueAtTime(0.0001, now); ng.gain.exponentialRampToValueAtTime(0.16, now + 0.05); ng.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+        noise.connect(bp); bp.connect(ng); ng.connect(this.master);
+        [saw, sq, sub, noise].forEach(n => { n.start(now); n.stop(now + dur + 0.05); });
+      },
+      // Can opening: metallic click + carbonation hiss
+      fizz() {
+        const ctx = this.ensure(); if (!ctx) return;
+        const now = ctx.currentTime;
+        const click = ctx.createOscillator(); click.type = 'square';
+        click.frequency.setValueAtTime(2400, now); click.frequency.exponentialRampToValueAtTime(500, now + 0.04);
+        const cg = ctx.createGain(); cg.gain.setValueAtTime(0.18, now); cg.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+        click.connect(cg); cg.connect(this.master); click.start(now); click.stop(now + 0.08);
+        const hiss = this._noise(0.9);
+        const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 2800;
+        const hg = ctx.createGain(); hg.gain.setValueAtTime(0.0001, now + 0.02); hg.gain.exponentialRampToValueAtTime(0.3, now + 0.05); hg.gain.exponentialRampToValueAtTime(0.0001, now + 0.85);
+        hiss.connect(hp); hp.connect(hg); hg.connect(this.master); hiss.start(now + 0.02); hiss.stop(now + 0.9);
+      },
+      blip(i) {
+        const ctx = this.ensure(); if (!ctx) return;
+        const now = ctx.currentTime, target = [660, 520, 780][i] || 600;
+        const o = ctx.createOscillator(); o.type = 'triangle';
+        o.frequency.setValueAtTime(target * 2, now); o.frequency.exponentialRampToValueAtTime(target, now + 0.12);
+        const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, now); g.gain.exponentialRampToValueAtTime(0.12, now + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, now + 0.25);
+        o.connect(g); g.connect(this.master); o.start(now); o.stop(now + 0.3);
+      }
+    };
+  </script>
+
+  <!-- ===================== Three.js engine ===================== -->
+  <script>
+  (function () {
+    const FLAVORS = window.AURA_FLAVORS;
+    const WHITE = new THREE.Color(0xffffff);
+    const SILVER = new THREE.Color(0xd2d6e2);
+    const TAU = Math.PI * 2;
+    const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+
+    function hexA(hex, a) { const n = parseInt(hex.slice(1), 16); return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`; }
+    function spaced(ctx, text, cx, y, spacing) {
+      const chars = [...text], widths = chars.map(c => ctx.measureText(c).width);
+      let x = cx - (widths.reduce((a, b) => a + b, 0) + spacing * (chars.length - 1)) / 2;
+      const prev = ctx.textAlign; ctx.textAlign = 'left';
+      chars.forEach((c, i) => { ctx.fillText(c, x, y); x += widths[i] + spacing; });
+      ctx.textAlign = prev;
+    }
+
+    class AuraEngine {
+      constructor(canvas) {
+        this.reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        this.small = Math.min(innerWidth, innerHeight) < 700;
+
+        const r = this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+        r.setPixelRatio(Math.min(devicePixelRatio, 2));
+        r.outputEncoding = THREE.sRGBEncoding;
+        r.toneMapping = THREE.ACESFilmicToneMapping;
+        r.toneMappingExposure = 1.15;
+        r.setClearColor(0x000000, 0);
+        r.autoClear = false;
+
+        this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.FogExp2(0x080810, 0.04);
+        this.camera = new THREE.PerspectiveCamera(40, innerWidth / innerHeight, 0.1, 100);
+        this.camera.position.set(0, 0, 7);
+        this.clock = new THREE.Clock();
+
+        this.flavor = 0;
+        this.accent = new THREE.Color(FLAVORS[0].hex);
+        this.accentTarget = this.accent.clone();
+        this.mouse = { x: 0, y: 0, tx: 0, ty: 0 };
+        this.fx = { speed: 1, intensity: 1, turbo: 0, flash: 0 };
+        // rig = where the can is; seq = the scroll story (open tab -> pour -> fill -> wash away)
+        this.rig = { x: 0, ax: 0, y: 0, z: 0, scale: 1, tilt: 0, spin: 0 };
+        this.seq = { open: 0, pour: 0, fill: 0, wash: 0 };
+        this.fovKick = 0; this.time = 0; this.idle = 0; this._css = ''; this._popped = false;
+        this.onPop = null;
+        this._v = new THREE.Vector3();
+
+        this._buildEnvironment();
+        this._buildLights();
+        this._buildCan();
+        this._buildCondensation();
+        this._buildEnergy();
+        this._buildDroplets();
+        this._buildPanels();
+        this._buildGlow();
+        this._buildLiquid();
+        this._bind();
+        this._resize();
+        this._applyAccent();
+
+        if (document.fonts) {
+          Promise.all([document.fonts.load('800 100px Unbounded'), document.fonts.load('600 60px Unbounded'), document.fonts.load('700 40px Figtree')])
+            .then(() => this.drawLabel(this.flavor)).catch(() => {});
+        }
+        this._loop = this._loop.bind(this);
+        requestAnimationFrame(this._loop);
+      }
+
+      _glowTexture() {
+        if (this._gt) return this._gt;
+        const c = document.createElement('canvas'); c.width = c.height = 128;
+        const g = c.getContext('2d'), grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+        grd.addColorStop(0, 'rgba(255,255,255,1)'); grd.addColorStop(0.2, 'rgba(255,255,255,0.6)');
+        grd.addColorStop(0.5, 'rgba(255,255,255,0.12)'); grd.addColorStop(1, 'rgba(255,255,255,0)');
+        g.fillStyle = grd; g.fillRect(0, 0, 128, 128);
+        return (this._gt = new THREE.CanvasTexture(c));
+      }
+
+      _buildEnvironment() {
+        const pmrem = new THREE.PMREMGenerator(this.renderer), env = new THREE.Scene();
+        env.add(new THREE.Mesh(new THREE.SphereGeometry(10, 32, 16), new THREE.MeshBasicMaterial({ color: 0x0a0a16, side: THREE.BackSide })));
+        const strip = (hex, power, w, h, pos) => {
+          const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(hex).multiplyScalar(power), side: THREE.DoubleSide }));
+          m.position.set(pos[0], pos[1], pos[2]); m.lookAt(0, 0, 0); env.add(m);
+        };
+        strip(0xffffff, 3.0, 7, 1.4, [0, 6, 3]);
+        strip(0x00f3ff, 2.5, 1.1, 9, [-6.5, 0, 2]);
+        strip(0xff0055, 2.5, 1.1, 9, [6.5, 0, 2]);
+        strip(0xffaa00, 2.0, 9, 0.7, [0, -5, -4]);
+        strip(0xffffff, 1.6, 3, 3, [0, 1.5, 8]);
+        strip(0xffffff, 1.2, 1, 6, [-3, 0, -7]);
+        this.scene.environment = pmrem.fromScene(env, 0.02).texture;
+        pmrem.dispose();
+      }
+
+      _buildLights() {
+        this.scene.add(new THREE.AmbientLight(0x404060, 0.45));
+        const key = new THREE.DirectionalLight(0xffffff, 0.9); key.position.set(3, 5, 6); this.scene.add(key);
+        this.rim = new THREE.DirectionalLight(this.accent.clone(), 1.6); this.rim.position.set(-4, 2, -5); this.scene.add(this.rim);
+        const glow = this._glowTexture();
+        this.points = FLAVORS.map((f, i) => {
+          const l = new THREE.PointLight(f.hex, 2, 14, 1.6);
+          l.userData.base = (i * TAU) / 3;
+          const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: f.hex, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false }));
+          halo.scale.set(0.7, 0.7, 1);
+          l.add(new THREE.Mesh(new THREE.SphereGeometry(0.035, 12, 12), new THREE.MeshBasicMaterial({ color: f.hex })));
+          l.add(halo); l.userData.halo = halo;
+          this.scene.add(l);
+          return l;
+        });
+      }
+
+      _buildCan() {
+        this.canRig = new THREE.Group();   // scroll position (particles live here too)
+        this.canPour = new THREE.Group();  // pour tilt
+        this.canTilt = new THREE.Group();  // mouse inertia
+        this.canSpin = new THREE.Group();  // idle spin
+        this.scene.add(this.canRig); this.canRig.add(this.canPour); this.canPour.add(this.canTilt); this.canTilt.add(this.canSpin);
+
+        const profile = [
+          [0, -1.2], [0.46, -1.2], [0.55, -1.18], [0.6, -1.13], [0.635, -1.06], [0.655, -0.96], [0.66, -0.86],
+          [0.66, 0.86], [0.655, 0.94], [0.63, 1.02], [0.58, 1.09], [0.535, 1.14], [0.525, 1.17], [0.535, 1.2],
+          [0.52, 1.225], [0.49, 1.225], [0.475, 1.2], [0.47, 1.16], [0, 1.16]
+        ].map(p => new THREE.Vector2(p[0], p[1]));
+        this.canMat = new THREE.MeshPhysicalMaterial({ color: SILVER.clone(), metalness: 1, roughness: 0.2, clearcoat: 1, clearcoatRoughness: 0.06, envMapIntensity: 1.5, side: THREE.DoubleSide });
+        this.canSpin.add(new THREE.Mesh(new THREE.LatheGeometry(profile, 128), this.canMat));
+
+        const W = 2048, H = 740;
+        this.labelCanvas = Object.assign(document.createElement('canvas'), { width: W, height: H });
+        this.glowCanvas = Object.assign(document.createElement('canvas'), { width: W, height: H });
+        this.labelCtx = this.labelCanvas.getContext('2d'); this.glowCtx = this.glowCanvas.getContext('2d');
+        this.labelTex = new THREE.CanvasTexture(this.labelCanvas); this.labelTex.encoding = THREE.sRGBEncoding;
+        this.labelTex.anisotropy = this.renderer.capabilities.getMaxAnisotropy();
+        this.glowTex = new THREE.CanvasTexture(this.glowCanvas); this.glowTex.encoding = THREE.sRGBEncoding;
+        this.labelMat = new THREE.MeshPhysicalMaterial({ map: this.labelTex, emissive: 0xffffff, emissiveMap: this.glowTex, emissiveIntensity: 1.2, metalness: 0.55, roughness: 0.26, clearcoat: 1, clearcoatRoughness: 0.04, envMapIntensity: 1.1 });
+        this.canSpin.add(new THREE.Mesh(new THREE.CylinderGeometry(0.664, 0.664, 1.62, 128, 1, true, -Math.PI, TAU), this.labelMat));
+
+        // Pull tab on a hinge at the lid centre; ring sits toward -z, the opening toward +z
+        const metal = new THREE.MeshStandardMaterial({ color: 0xe0e3ee, metalness: 1, roughness: 0.18 });
+        this.tabPivot = new THREE.Group(); this.tabPivot.position.set(0, 1.172, 0);
+        const ring = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.022, 12, 40), metal);
+        ring.rotation.x = Math.PI / 2; ring.scale.set(1, 1.4, 1); ring.position.set(0, 0, -0.13);
+        const rivet = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.02, 20), metal);
+        this.tabPivot.add(ring); this.tabPivot.add(rivet); this.canSpin.add(this.tabPivot);
+
+        this.hole = new THREE.Mesh(new THREE.CircleGeometry(0.12, 32), new THREE.MeshBasicMaterial({ color: 0x040407 }));
+        this.hole.rotation.x = -Math.PI / 2; this.hole.position.set(0, 1.1625, 0.27); this.hole.visible = false;
+        this.canSpin.add(this.hole);
+
+        this.mouth = new THREE.Object3D(); this.mouth.position.set(0, 1.21, 0.46); // rim lip the liquid leaves from
+        this.canSpin.add(this.mouth);
+
+        this.drawLabel(0);
+      }
+
+      drawLabel(i) {
+        const f = FLAVORS[i], ctx = this.labelCtx, gtx = this.glowCtx, W = 2048, H = 740, cx = 1024;
+        let g = ctx.createLinearGradient(0, 0, 0, H);
+        g.addColorStop(0, '#0c0c17'); g.addColorStop(0.5, '#1a1a2d'); g.addColorStop(1, '#0c0c17');
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        g = ctx.createRadialGradient(cx, H * 0.45, 20, cx, H * 0.45, 720);
+        g.addColorStop(0, hexA(f.hex, 0.38)); g.addColorStop(1, hexA(f.hex, 0));
+        ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+        ctx.strokeStyle = hexA(f.hex, 0.16); ctx.lineWidth = 2;
+        for (let x = -H; x < W; x += 38) { ctx.beginPath(); ctx.moveTo(x, H); ctx.lineTo(x + H * 0.6, 0); ctx.stroke(); }
+        g = ctx.createLinearGradient(cx - 540, 0, cx + 540, 0);
+        g.addColorStop(0, 'rgba(8,8,16,0)'); g.addColorStop(0.5, 'rgba(8,8,16,0.6)'); g.addColorStop(1, 'rgba(8,8,16,0)');
+        ctx.fillStyle = g; ctx.fillRect(cx - 540, 130, 1080, 500);
+        ctx.globalAlpha = 0.1; ctx.fillStyle = f.hex; ctx.textAlign = 'center';
+        ctx.font = '800 440px Unbounded, Arial Black, sans-serif'; ctx.fillText(f.code, cx + 700, 590); ctx.globalAlpha = 1;
+        ctx.fillStyle = '#f4f6ff'; ctx.font = '800 168px Unbounded, Arial Black, sans-serif'; ctx.fillText('AURA', cx, 330);
+        ctx.fillStyle = f.hex; ctx.font = '600 62px Unbounded, Arial, sans-serif'; spaced(ctx, 'KINETIX', cx, 410, 22);
+        ctx.fillStyle = 'rgba(255,255,255,0.35)'; ctx.fillRect(cx - 180, 450, 360, 2);
+        ctx.fillStyle = '#ffffff'; ctx.font = '700 44px Figtree, Arial, sans-serif'; spaced(ctx, f.name.toUpperCase(), cx, 522, 6);
+        ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.font = '500 27px Figtree, Arial, sans-serif';
+        spaced(ctx, '400 MG NOOTROPICS     0 G SUGAR     355 ML', cx, 582, 3);
+        ctx.fillStyle = f.hex; ctx.fillRect(0, 24, W, 6); ctx.fillRect(0, H - 30, W, 6);
+        let seed = 7 + i * 13; const rand = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+        ctx.fillStyle = '#f4f6ff'; ctx.fillRect(130, 280, 240, 190); ctx.fillStyle = '#080810';
+        for (let x = 145; x < 355;) { const w = 2 + Math.floor(rand() * 6); if (rand() > 0.35) ctx.fillRect(x, 295, w, 140); x += w + 2; }
+        ctx.fillStyle = 'rgba(255,255,255,0.55)'; ctx.font = '500 24px Figtree, Arial';
+        ['NOOTROPIC ENERGY + HYDRATION', 'Contains caffeine. Not for children.', 'Concept product. Not for sale.'].forEach((t, k) => ctx.fillText(t, 1760, 320 + k * 44));
+        this.labelTex.needsUpdate = true;
+
+        gtx.fillStyle = '#000'; gtx.fillRect(0, 0, W, H);
+        gtx.fillStyle = f.hex; gtx.fillRect(0, 24, W, 6); gtx.fillRect(0, H - 30, W, 6);
+        gtx.strokeStyle = hexA(f.hex, 0.12); gtx.lineWidth = 2;
+        for (let x = -H; x < W; x += 76) { gtx.beginPath(); gtx.moveTo(x, H); gtx.lineTo(x + H * 0.6, 0); gtx.stroke(); }
+        gtx.textAlign = 'center'; gtx.shadowColor = f.hex; gtx.shadowBlur = 30;
+        gtx.fillStyle = f.hex; gtx.font = '600 62px Unbounded, Arial, sans-serif'; spaced(gtx, 'KINETIX', cx, 410, 22);
+        gtx.shadowBlur = 0; gtx.fillStyle = 'rgba(255,255,255,0.18)';
+        gtx.font = '800 168px Unbounded, Arial Black, sans-serif'; gtx.fillText('AURA', cx, 330);
+        this.glowTex.needsUpdate = true;
+      }
+
+      _buildCondensation() {
+        const N = this.small ? 140 : 280;
+        this.condData = Array.from({ length: N }, () => ({ a: Math.random() * TAU, y: Math.random() * 1.9 - 0.95, v: 0.01 + Math.random() * 0.06, r: 0.668 + Math.random() * 0.008 }));
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+        this.condensation = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.032, map: this._glowTexture(), transparent: true, depthWrite: false, color: 0xe6fbff, opacity: 0.75 }));
+        this.canSpin.add(this.condensation);
+      }
+
+      _buildEnergy() {
+        const N = this.small ? 450 : 1100;   // halved
+        const geo = new THREE.BufferGeometry();
+        const attr = (name, fn) => { const a = new Float32Array(N); for (let i = 0; i < N; i++) a[i] = fn(); geo.setAttribute(name, new THREE.BufferAttribute(a, 1)); };
+        geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(N * 3), 3));
+        attr('aRadius', () => 1.0 + Math.pow(Math.random(), 0.7) * 2.6);
+        attr('aAngle', () => Math.random() * TAU);
+        attr('aY', () => Math.random() * 6.4 - 3.2);
+        attr('aSpeed', () => 0.15 + Math.random() * 0.45);
+        attr('aSize', () => 0.6 + Math.pow(Math.random(), 3) * 2.2);
+        attr('aPhase', () => Math.random() * 6.28);
+        attr('aMix', () => Math.random());
+        this.energyUniforms = { uTime: { value: 0 }, uTurbo: { value: 0 }, uIntensity: { value: 1 }, uPixelRatio: { value: 1 }, uColor: { value: this.accent.clone() } };
+        this.energy = new THREE.Points(geo, new THREE.ShaderMaterial({
+          uniforms: this.energyUniforms, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+          vertexShader: `
+            uniform float uTime; uniform float uTurbo; uniform float uPixelRatio;
+            attribute float aRadius; attribute float aAngle; attribute float aY; attribute float aSpeed;
+            attribute float aSize; attribute float aPhase; attribute float aMix;
+            varying float vAlpha; varying float vMix;
+            void main() {
+              float t = uTime * aSpeed + aPhase;
+              float y = mod(aY + uTime * 0.36 * aSpeed + 3.2, 6.4) - 3.2;
+              float r = aRadius + sin(t * 1.3 + aPhase * 3.0) * 0.18 + uTurbo * sin(t * 7.0 + aPhase) * 0.24;
+              r *= 1.0 - smoothstep(2.2, 3.2, abs(y)) * 0.35;
+              float ang = aAngle + t;
+              vec4 mv = modelViewMatrix * vec4(cos(ang) * r, y, sin(ang) * r * 0.85, 1.0);
+              gl_Position = projectionMatrix * mv;
+              gl_PointSize = aSize * uPixelRatio * (1.0 + uTurbo * 0.8) * (26.0 / -mv.z);
+              vAlpha = (0.55 + 0.45 * sin(t * 4.0 + aPhase * 10.0)) * (1.0 - smoothstep(2.6, 3.2, abs(y)));
+              vMix = aMix;
+            }`,
+          fragmentShader: `
+            uniform vec3 uColor; uniform float uIntensity;
+            varying float vAlpha; varying float vMix;
+            void main() {
+              float d = length(gl_PointCoord - 0.5);
+              if (d > 0.5) discard;
+              float glow = pow(1.0 - d * 2.0, 2.2);
+              vec3 col = mix(uColor, vec3(1.0), smoothstep(0.18, 0.0, d) * 0.8 + vMix * 0.2);
+              gl_FragColor = vec4(col * uIntensity, glow * vAlpha * 0.9);
+            }`
+        }));
+        this.energy.frustumCulled = false;
+        this.canRig.add(this.energy);
+      }
+
+      _buildDroplets() {
+        const N = this.small ? 9 : 17;   // halved
+        this.dropUniforms = { uTime: { value: 0 } };
+        this.dropMat = new THREE.MeshPhysicalMaterial({ color: this.accent.clone(), metalness: 0.1, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.02, transparent: true, opacity: 0.82, envMapIntensity: 2.2, emissive: this.accent.clone().multiplyScalar(0.25) });
+        this.dropMat.onBeforeCompile = (shader) => {
+          shader.uniforms.uTime = this.dropUniforms.uTime;
+          shader.vertexShader = 'uniform float uTime;\n' + shader.vertexShader.replace('#include <begin_vertex>', `
+            #include <begin_vertex>
+            float ph = 0.0;
+            #ifdef USE_INSTANCING
+              ph = instanceMatrix[3].x * 3.0 + instanceMatrix[3].y * 2.0;
+            #endif
+            transformed += normal * (sin(position.y * 5.0 + uTime * 2.5 + ph) * 0.09 + sin(position.x * 4.0 + uTime * 1.7 + ph) * 0.06);`);
+        };
+        this.dropMat.customProgramCacheKey = () => 'aura-droplet';
+        this.drops = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(1, 4), this.dropMat, N);
+        this.dropData = Array.from({ length: N }, () => ({ radius: 1.5 + Math.random() * 2.2, angle: Math.random() * TAU, y: (Math.random() - 0.5) * 4, speed: 0.1 + Math.random() * 0.25, size: 0.04 + Math.pow(Math.random(), 2) * 0.13, phase: Math.random() * 6.28 }));
+        this._dummy = new THREE.Object3D();
+        this.canRig.add(this.drops);
+      }
+
+      _buildPanels() {
+        this.panels = new THREE.Group(); this.scene.add(this.panels);
+        const geo = new THREE.BoxGeometry(1, 1.45, 0.03);
+        const mat = new THREE.MeshPhysicalMaterial({ color: 0xa8b8ff, metalness: 0, roughness: 0.06, transparent: true, opacity: 0.08, clearcoat: 1, envMapIntensity: 1.6, side: THREE.DoubleSide, depthWrite: false });
+        this.panelEdgeMat = new THREE.LineBasicMaterial({ color: this.accent.clone(), transparent: true, opacity: 0.3 });
+        const edges = new THREE.EdgesGeometry(geo);
+        this.panelData = [];
+        for (let i = 0; i < 4; i++) {
+          const m = new THREE.Mesh(geo, mat); m.add(new THREE.LineSegments(edges, this.panelEdgeMat));
+          const s = 0.7 + Math.random() * 0.6; m.scale.set(s, s, 1); this.panels.add(m);
+          this.panelData.push({ mesh: m, angle: (i / 4) * TAU, radius: 4 + Math.random() * 0.8, y: (Math.random() - 0.5) * 2.6, phase: Math.random() * 6 });
+        }
+      }
+
+      _buildGlow() {
+        const glow = this._glowTexture();
+        const add = (o) => { this.canRig.add(o); return o; };
+        this.halo = add(new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: this.accent.clone(), transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false })));
+        this.halo.scale.set(6, 6, 1); this.halo.position.set(0, 0, -1.6);
+        const ringMat = (o) => new THREE.MeshBasicMaterial({ color: this.accent.clone(), transparent: true, opacity: o, blending: THREE.AdditiveBlending, depthWrite: false });
+        this.ring = add(new THREE.Mesh(new THREE.TorusGeometry(1.2, 0.012, 8, 180), ringMat(0.8)));
+        this.ring2 = add(new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.006, 8, 180), ringMat(0.35)));
+        [this.ring, this.ring2].forEach(r => { r.rotation.x = Math.PI / 2; r.position.y = -1.45; r.userData.base = r.material.opacity; });
+        this.floor = add(new THREE.Mesh(new THREE.PlaneGeometry(5, 5), new THREE.MeshBasicMaterial({ map: glow, color: this.accent.clone(), transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false })));
+        this.floor.rotation.x = -Math.PI / 2; this.floor.position.y = -1.5;
+        this.beamUniforms = { uColor: { value: this.accent.clone() }, uIntensity: { value: 1 } };
+        this.beam = add(new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.35, 4, 64, 1, true), new THREE.ShaderMaterial({
+          uniforms: this.beamUniforms, transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending,
+          vertexShader: `varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+            void main(){ vUv = uv; vec4 mv = modelViewMatrix * vec4(position,1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }`,
+          fragmentShader: `uniform vec3 uColor; uniform float uIntensity; varying vec2 vUv; varying vec3 vN; varying vec3 vV;
+            void main(){ float a = pow(abs(dot(vN, vV)), 2.5) * pow(1.0 - vUv.y, 1.3) * 0.2 * uIntensity; gl_FragColor = vec4(uColor, a); }`
+        })));
+        this.beam.position.y = 0.5;
+      }
+
+      // Full-screen liquid: pour stream, rising fill with waves/bubbles/caustics, and the sideways wash-away
+      _buildLiquid() {
+        this.liquidScene = new THREE.Scene();
+        this.liquidCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+        this.liquidUniforms = {
+          uTime: { value: 0 }, uFill: { value: 0 }, uWash: { value: 0 }, uStream: { value: 0 }, uTurbo: { value: 0 },
+          uAspect: { value: 1 }, uMouth: { value: new THREE.Vector2(0.5, 0.6) }, uColor: { value: this.accent.clone() }
+        };
+        const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+          uniforms: this.liquidUniforms, transparent: true, depthTest: false, depthWrite: false,
+          vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
+          fragmentShader: `
+            precision highp float;
+            uniform float uTime; uniform float uFill; uniform float uWash; uniform float uStream; uniform float uTurbo; uniform float uAspect;
+            uniform vec2 uMouth; uniform vec3 uColor;
+            varying vec2 vUv;
+            float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+            float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f * f * (3.0 - 2.0 * f);
+              return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), f.x), mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y); }
+            void main(){
+              vec2 p = vUv; float t = uTime;
+              // stream: leaves the rim sideways, then falls in a parabola
+              float drop = max(uMouth.y - p.y, 0.0);
+              float sx = uMouth.x + 0.085 * sqrt(drop) / uAspect + 0.003 * sin(p.y * 40.0 - t * 18.0);
+              // liquid level (drops and sloshes right while washing away)
+              float level = uFill * 1.12 - 0.06 - uWash * 0.35 + (p.x - 0.5) * uWash * 0.5;
+              float hitX = uMouth.x + 0.085 * sqrt(max(uMouth.y - level, 0.0)) / uAspect;
+              float dx = abs(p.x - hitX) * uAspect;
+              float amp = 1.0 + uTurbo * 1.5;
+              float h = level + (0.012 * sin(p.x * 9.0 + t * 1.6) + 0.007 * sin(p.x * 23.0 - t * 2.4)) * amp
+                        + uStream * 0.02 * sin(dx * 70.0 - t * 14.0) * exp(-dx * 7.0);
+              // wash front sweeps left -> right
+              float front = uWash * 1.6 - 0.3 + 0.05 * sin(p.y * 10.0 + t * 3.0) + 0.025 * sin(p.y * 27.0 - t * 5.0);
+              float inX = smoothstep(front, front + 0.004, p.x);
+              float body = smoothstep(h + 0.002, h - 0.002, p.y) * inX;
+              float depth = clamp(h - p.y, 0.0, 1.5);
+              vec3 ink = vec3(0.03, 0.03, 0.06);
+              vec3 col = mix(mix(ink, uColor, 0.5), mix(ink, uColor, 0.16), smoothstep(0.0, 0.35, depth));
+              float c = noise(vec2(p.x * uAspect * 6.0, p.y * 6.0 - t * 0.4) + noise(p * 3.0 + t * 0.2) * 2.0);
+              col += uColor * pow(smoothstep(0.55, 0.78, c), 2.0) * 0.22;
+              vec2 g = vec2(p.x * uAspect, p.y) * 18.0; g.y -= t * 1.2;
+              vec2 id = floor(g); vec2 f = fract(g) - 0.5; float rnd = hash(id);
+              f.x += 0.25 * sin(t * 2.0 + rnd * 6.28);
+              float bub = step(0.86, rnd) * (smoothstep(0.12, 0.07, length(f)) - 0.6 * smoothstep(0.07, 0.0, length(f)));
+              col += vec3(0.85, 0.95, 1.0) * bub * 0.3;
+              float surf = smoothstep(0.012, 0.0, abs(p.y - h)) * inX;
+              col = mix(col, mix(uColor, vec3(1.0), 0.6), surf * 0.8);
+              float edge = smoothstep(0.03, 0.0, abs(p.x - front)) * step(p.y, h + 0.01);
+              col = mix(col, vec3(1.0), edge * 0.5);
+              float alpha = max(body, surf * 0.9);
+              float w = 0.008 + 0.008 * min(drop, 0.6);
+              float sm = smoothstep(w, w * 0.35, abs(p.x - sx) * uAspect) * step(p.y, uMouth.y) * step(h - 0.01, p.y) * uStream;
+              col = mix(col, mix(uColor, vec3(1.0), 0.35 + 0.3 * sin(p.y * 60.0 - t * 25.0)), sm);
+              alpha = max(alpha, sm);
+              float splash = uStream * exp(-dx * 25.0) * exp(-abs(p.y - h) * 60.0);
+              col += uColor * splash * 0.8; alpha = max(alpha, splash * 0.8);
+              if (alpha < 0.002) discard;
+              gl_FragColor = vec4(col, alpha);
+            }`
+        }));
+        quad.frustumCulled = false;
+        this.liquidScene.add(quad);
+      }
+
+      _bind() {
+        addEventListener('resize', () => this._resize());
+        addEventListener('pointermove', (e) => { this.mouse.tx = (e.clientX / innerWidth) * 2 - 1; this.mouse.ty = -((e.clientY / innerHeight) * 2 - 1); }, { passive: true });
+        document.addEventListener('pointerleave', () => { this.mouse.tx = 0; this.mouse.ty = 0; });
+      }
+
+      _resize() {
+        const w = innerWidth, h = innerHeight;
+        this.renderer.setSize(w, h, false);
+        this.camera.aspect = w / h;
+        this.layout = w < 768 ? { spread: 0, camZ: 8.8 } : w < 1100 ? { spread: 1.15, camZ: 7.8 } : { spread: 1.75, camZ: 7 };
+        this.camera.updateProjectionMatrix();
+        this.energyUniforms.uPixelRatio.value = this.renderer.getPixelRatio();
+        this.liquidUniforms.uAspect.value = w / h;
+      }
+
+      _applyAccent() {
+        const c = this.accent;
+        this.energyUniforms.uColor.value.copy(c);
+        this.beamUniforms.uColor.value.copy(c);
+        this.liquidUniforms.uColor.value.copy(c);
+        this.dropMat.color.copy(c).lerp(WHITE, 0.25);
+        this.dropMat.emissive.copy(c).multiplyScalar(0.3);
+        this.canMat.color.copy(SILVER).lerp(c, 0.35);
+        [this.halo, this.ring, this.ring2, this.floor].forEach(o => o.material.color.copy(c));
+        this.panelEdgeMat.color.copy(c);
+        this.rim.color.copy(c);
+        const css = `${Math.round(c.r * 255)} ${Math.round(c.g * 255)} ${Math.round(c.b * 255)}`;
+        if (css !== this._css) { document.documentElement.style.setProperty('--accent', css); this._css = css; }
+      }
+
+      // ---------- public API ----------
+      setFlavor(i) {
+        if (i === this.flavor) return;
+        this.flavor = i;
+        this.accentTarget.set(FLAVORS[i].hex);
+        gsap.to(this.rig, { spin: this.rig.spin + TAU, duration: 1.6, ease: 'power3.inOut' });
+        gsap.delayedCall(0.55, () => this.drawLabel(i));
+        gsap.fromTo(this.fx, { flash: 1 }, { flash: 0, duration: 1.3, ease: 'power2.out' });
+      }
+
+      setTurbo(on) {
+        gsap.to(this.fx, { speed: on ? 3 : 1, intensity: on ? 1.7 : 1, turbo: on ? 1 : 0, duration: on ? 0.9 : 1.4, ease: on ? 'power3.out' : 'power2.inOut' });
+        gsap.fromTo(this, { fovKick: on ? 14 : -6 }, { fovKick: 0, duration: 1.4, ease: 'elastic.out(1, 0.5)' });
+      }
+
+      bindScroll() {
+        if (this._scrollBound || !window.ScrollTrigger) return;
+        this._scrollBound = true;
+        gsap.registerPlugin(ScrollTrigger);
+        const K = {
+          pour:  { x: 0, ax: -0.75, y: 1.2, z: 0, scale: 0.85, tilt: 2.15 },
+          flav:  { x: -1, ax: 0, y: 0, z: 0, scale: 0.95, tilt: 0 },
+          order: { x: 0, ax: 0, y: 0.85, z: 0, scale: 0.82, tilt: 0 }
+        };
+        const $ = (s) => document.querySelector(s);
+
+        // 1) Hero: open the tab -> tilt and pour -> liquid fills the screen
+        if ($('#hero')) {
+          gsap.timeline({ scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom bottom', scrub: 1 } })
+            .to(this.seq, { open: 1, duration: 2, ease: 'power2.out' }, 0)
+            .to(this.rig, { y: 0.25, duration: 2, ease: 'power1.out' }, 0)
+            .to('.scroll-hint', { opacity: 0, y: 20, duration: 1 }, 0)
+            .to('.bg-type', { opacity: 0, scale: 1.12, duration: 3, ease: 'power1.in' }, 1.8)
+            .to(this.rig, { ...K.pour, duration: 3, ease: 'power2.inOut' }, 2)
+            .to(this.seq, { pour: 1, duration: 3, ease: 'power1.inOut' }, 2)
+            .to(this.seq, { fill: 1, duration: 5.5, ease: 'power1.in' }, 4.5);
+        }
+        // 2) Benefits: everything is under liquid, so quietly reset the can for the flavor section
+        if ($('#benefits')) {
+          gsap.fromTo(this.rig, { ...K.pour }, { ...K.flav, ease: 'none', immediateRender: false, scrollTrigger: { trigger: '#benefits', start: 'top center', end: 'bottom bottom', scrub: true } });
+          gsap.fromTo(this.seq, { open: 1, pour: 1 }, { open: 0, pour: 0, ease: 'none', immediateRender: false, scrollTrigger: { trigger: '#benefits', start: 'top center', end: 'center center', scrub: true } });
+        }
+        // 3) Flavors: the liquid washes away to the right, revealing the can
+        if ($('#flavors')) {
+          gsap.fromTo(this.seq, { wash: 0 }, { wash: 1, ease: 'power1.inOut', immediateRender: false, scrollTrigger: { trigger: '#flavors', start: 'top bottom', end: 'top 20%', scrub: 1 } });
+        }
+        // 4) Waitlist
+        if ($('#order')) {
+          gsap.fromTo(this.rig, { ...K.flav }, { ...K.order, ease: 'power1.inOut', immediateRender: false, scrollTrigger: { trigger: '#order', start: 'top bottom', end: 'top 15%', scrub: 1.2 } });
+        }
+      }
+
+      // ---------- render loop ----------
+      _loop() {
+        requestAnimationFrame(this._loop);
+        const dt = Math.min(this.clock.getDelta(), 0.05), rt = this.clock.elapsedTime;
+        const fx = this.fx, L = this.layout, S = this.seq, motion = this.reduced ? 0.35 : 1;
+        this.time += dt * fx.speed * motion;
+        const t = this.time;
+
+        const k = 1 - Math.exp(-dt * 3.2);
+        this.accent.lerp(this.accentTarget, k);
+        this._applyAccent();
+        const mk = 1 - Math.exp(-dt * 3.0);
+        this.mouse.x += (this.mouse.tx - this.mouse.x) * mk;
+        this.mouse.y += (this.mouse.ty - this.mouse.y) * mk;
+
+        const pourAmt = smooth(0, 2.15, this.rig.tilt);
+        const openAmt = smooth(0, 1, S.open);
+
+        // can transforms
+        this.canRig.position.set(this.rig.x * L.spread + this.rig.ax, this.rig.y, this.rig.z);
+        this.canRig.scale.setScalar(this.rig.scale);
+        this.canPour.rotation.z = -this.rig.tilt;
+        const mouseAmt = 1 - pourAmt * 0.8;
+        this.canTilt.rotation.x = (-this.mouse.y * 0.28 + Math.sin(rt * 0.7) * 0.03) * mouseAmt;
+        this.canTilt.rotation.z = (-this.mouse.x * 0.14 + 0.06) * mouseAmt;
+        this.canTilt.rotation.y = this.mouse.x * 0.45 * mouseAmt;
+        this.canTilt.position.y = Math.sin(rt * 1.1) * 0.08 * mouseAmt + Math.sin(rt * 40) * 0.008 * fx.turbo;
+
+        // idle spin slows to a stop as the tab opens, settling with the opening facing the pour side
+        this.idle += dt * 0.22 * fx.speed * motion * (1 - S.open);
+        const settle = Math.PI / 2 + Math.round((this.idle - Math.PI / 2) / TAU) * TAU;
+        this.canSpin.rotation.y = this.idle + (settle - this.idle) * openAmt + this.rig.spin;
+        this.tabPivot.rotation.x = smooth(0, 0.6, S.open) * 1.25 - smooth(0.6, 1, S.open) * 1.05;
+        this.hole.visible = S.open > 0.35;
+        const hs = smooth(0.35, 0.7, S.open); this.hole.scale.set(hs, hs * 0.75, 1);
+
+        if (!this._popped && S.open > 0.5) {
+          this._popped = true;
+          gsap.fromTo(fx, { flash: 1 }, { flash: 0, duration: 1.1, ease: 'power2.out' });
+          if (this.onPop) this.onPop();
+        } else if (this._popped && S.open < 0.2) this._popped = false;
+
+        // lights
+        this.points.forEach((l, i) => {
+          const a = t * 0.45 + l.userData.base;
+          l.position.set(Math.cos(a) * 3.2 + this.mouse.x * 2.2 + this.canRig.position.x, Math.sin(a * 1.3) * 1.4 + this.mouse.y * 1.6 + this.canRig.position.y, Math.sin(a) * 3.2 + 1.0 + this.canRig.position.z);
+          const target = (i === this.flavor ? 5.5 : 1.3) * fx.intensity * (1 + fx.turbo * 0.4 * Math.sin(rt * 18 + i));
+          l.intensity += (target - l.intensity) * k;
+          l.userData.halo.material.opacity = Math.min(1, 0.25 + l.intensity * 0.12);
+        });
+        this.rim.intensity = 1.6 * fx.intensity;
+
+        // particles + glow (floor glow fades while the can is lifted to pour)
+        const ground = 1 - pourAmt;
+        this.energyUniforms.uTime.value = t;
+        this.energyUniforms.uTurbo.value = fx.turbo;
+        this.energyUniforms.uIntensity.value = fx.intensity * (1 + fx.flash * 0.8);
+        this.beamUniforms.uIntensity.value = fx.intensity * (1 + fx.flash) * ground;
+        this.labelMat.emissiveIntensity = 1.1 + fx.flash * 2.5 + fx.turbo * (0.8 + 0.6 * Math.sin(rt * 20));
+        this.halo.material.opacity = 0.4 + fx.flash * 0.4 + fx.turbo * 0.25;
+        const pulse = 1 + Math.sin(rt * 2) * 0.03 + fx.turbo * 0.08 * Math.sin(rt * 12);
+        this.ring.scale.setScalar(pulse); this.ring2.scale.setScalar(2 - pulse);
+        this.ring.rotation.z = t * 0.3; this.ring2.rotation.z = -t * 0.2;
+        [this.ring, this.ring2].forEach(r => { r.material.opacity = r.userData.base * ground; });
+        this.floor.material.opacity = 0.55 * ground;
+
+        const pos = this.condensation.geometry.attributes.position.array;
+        for (let i = 0; i < this.condData.length; i++) {
+          const d = this.condData[i];
+          d.y -= d.v * dt * (0.4 + fx.turbo);
+          if (d.y < -0.98) { d.y = 0.98; d.a = Math.random() * TAU; }
+          pos[i * 3] = Math.sin(d.a) * d.r; pos[i * 3 + 1] = d.y; pos[i * 3 + 2] = Math.cos(d.a) * d.r;
+        }
+        this.condensation.geometry.attributes.position.needsUpdate = true;
+
+        const D = this._dummy;
+        this.dropUniforms.uTime.value = t;
+        this.dropData.forEach((d, i) => {
+          const a = d.angle + t * d.speed;
+          D.position.set(Math.cos(a) * d.radius, d.y + Math.sin(t * 0.8 + d.phase) * 0.35, Math.sin(a) * d.radius * 0.75);
+          const s = d.size * (1 + 0.1 * Math.sin(t * 3 + d.phase));
+          D.scale.set(s, s * (1 + 0.12 * Math.sin(t * 2.3 + d.phase)), s);
+          D.rotation.set(t * 0.3 + d.phase, t * 0.4, 0);
+          D.updateMatrix(); this.drops.setMatrixAt(i, D.matrix);
+        });
+        this.drops.instanceMatrix.needsUpdate = true;
+
+        this.panels.position.copy(this.canRig.position);
+        this.panelData.forEach(p => {
+          const a = p.angle + t * 0.06;
+          p.mesh.position.set(Math.cos(a) * p.radius, p.y + Math.sin(rt * 0.5 + p.phase) * 0.25, Math.sin(a) * p.radius * 0.6 - 1);
+          p.mesh.lookAt(this.panels.position.x, p.mesh.position.y + this.panels.position.y, this.panels.position.z);
+          p.mesh.rotateZ(Math.sin(rt * 0.3 + p.phase) * 0.15);
+        });
+
+        this.camera.position.set(this.mouse.x * 0.35, this.mouse.y * 0.25, L.camZ);
+        this.camera.lookAt(0, 0, 0);
+        this.camera.fov = 40 + this.fovKick;
+        this.camera.updateProjectionMatrix();
+
+        this.renderer.clear();
+        this.renderer.render(this.scene, this.camera);
+
+        // liquid overlay (after the main render so the camera/can matrices are current)
+        const stream = smooth(0.65, 1, S.pour) * (1 - smooth(0.97, 1, S.fill));
+        if ((S.fill > 0.001 || stream > 0.001) && S.wash < 0.999) {
+          this.mouth.getWorldPosition(this._v).project(this.camera);
+          const U = this.liquidUniforms;
+          U.uMouth.value.set((this._v.x + 1) / 2, (this._v.y + 1) / 2);
+          U.uTime.value = t; U.uFill.value = S.fill; U.uWash.value = S.wash; U.uStream.value = stream; U.uTurbo.value = fx.turbo;
+          this.renderer.render(this.liquidScene, this.liquidCam);
+        }
+      }
+    }
+
+    try {
+      window.__aura = new AuraEngine(document.getElementById('webgl'));
+    } catch (err) {
+      console.warn('WebGL unavailable, running without the 3D scene.', err);
+      window.__aura = null;
+    }
+  })();
+  </script>
+
+  <!-- ===================== React UI ===================== -->
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useRef } = React;
+    const FLAVORS = window.AURA_FLAVORS;
+
+    const ICONS = {
+      zap: '<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+      arrowRight: '<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>',
+      volume: '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>',
+      mute: '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/>',
+      check: '<polyline points="20 6 9 17 4 12"/>'
+    };
+    function Icon({ name, size = 20, strokeWidth = 1.75 }) {
+      return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth}
+        strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" dangerouslySetInnerHTML={{ __html: ICONS[name] }} />;
+    }
+    function Logo() {
+      return (
+        <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2 28 9v14l-12 7L4 23V9z" fill="none" stroke="rgb(var(--accent))" strokeWidth="1.6" style={{ filter: 'drop-shadow(0 0 6px rgb(var(--accent)))' }} />
+          <path d="M17.5 8 11 17.5h4.5L14.5 24 21 14.5h-4.5z" fill="rgb(var(--accent))" />
+        </svg>
+      );
+    }
+
+    function useTweened(target) {
+      const [vals, setVals] = useState(target);
+      const cur = useRef(target);
+      const key = target.join(',');
+      useEffect(() => {
+        let raf;
+        const tick = () => {
+          let settled = true;
+          const next = cur.current.map((v, i) => { const d = target[i] - v; if (Math.abs(d) > 0.05) { settled = false; return v + d * 0.12; } return target[i]; });
+          cur.current = next; setVals(next);
+          if (!settled) raf = requestAnimationFrame(tick);
+        };
+        raf = requestAnimationFrame(tick);
+        return () => cancelAnimationFrame(raf);
+      }, [key]);
+      return vals;
+    }
+
+    // Adds .in to every .rise element inside the ref once it scrolls into view
+    function useRise(ref) {
+      useEffect(() => {
+        const els = ref.current ? ref.current.querySelectorAll('.rise') : [];
+        const io = new IntersectionObserver((entries) => entries.forEach(e => e.target.classList.toggle('in', e.isIntersecting)), { threshold: 0.25 });
+        els.forEach(el => io.observe(el));
+        return () => io.disconnect();
+      }, []);
+    }
+
+    function Nav({ sound, onSound }) {
+      return (
+        <header className="fixed top-0 inset-x-0 z-40">
+          <div className="mx-auto max-w-7xl px-5 md:px-8 pt-5 flex items-center justify-between">
+            <a href="#hero" className="flex items-center gap-3" aria-label="Aura Kinetix, back to top">
+              <Logo /><span className="font-display text-[12px] font-semibold tracking-[0.24em]">AURA KINETIX</span>
+            </a>
+            <button className="icon-btn" onClick={onSound} aria-pressed={sound} aria-label={sound ? 'Turn sound off' : 'Turn sound on'}>
+              <Icon name={sound ? 'volume' : 'mute'} size={18} />
+            </button>
+          </div>
+        </header>
+      );
+    }
+
+    function KineticLine({ text, delay = 0, outline = false }) {
+      return (
+        <span className={`line ${outline ? 'outline' : ''}`}>
+          {[...text].map((c, i) => <span key={i} className="ch" style={{ '--i': i, '--d': delay }}>{c}</span>)}
+        </span>
+      );
+    }
+
+    // Fixed headline that sits behind the WebGL can
+    function BackdropType() {
+      const inner = useRef(null);
+      useEffect(() => {
+        const xTo = gsap.quickTo(inner.current, 'x', { duration: 1.4, ease: 'power3.out' });
+        const yTo = gsap.quickTo(inner.current, 'y', { duration: 1.4, ease: 'power3.out' });
+        const mv = (e) => { xTo(-(e.clientX / innerWidth - 0.5) * 34); yTo(-(e.clientY / innerHeight - 0.5) * 20); };
+        addEventListener('pointermove', mv, { passive: true });
+        return () => removeEventListener('pointermove', mv);
+      }, []);
+      return (
+        <div className="bg-type" aria-hidden="true">
+          <div ref={inner} className="kinetic">
+            <KineticLine text="BEYOND" delay={0.1} />
+            <KineticLine text="HYDRATION" delay={0.4} outline />
+          </div>
+        </div>
+      );
+    }
+
+    function Hero() {
+      return (
+        <section id="hero" className="relative h-[340vh]">
+          <h1 className="sr-only">Aura Kinetix. Beyond hydration.</h1>
+          <div className="sticky top-0 h-[100svh] flex items-end justify-center pb-28 md:pb-32 pointer-events-none">
+            <div className="scroll-hint">
+              <span>Zero-sugar nootropic energy</span>
+              <span className="hint-line" />
+              <span className="text-white/40 text-xs">Scroll to open</span>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    const BENEFITS = [
+      { title: 'Focus that holds', text: 'Nootropics and slow-release caffeine for steady attention instead of a spike and crash.' },
+      { title: 'Hydration that counts', text: 'Electrolytes matched to sweat loss, so the can hydrates while it energizes.' },
+      { title: 'Recovery built in', text: 'Peptides and adaptogens help you bounce back after long, demanding days.' }
+    ];
+    const INGREDIENTS = [
+      ['400 mg', 'Cognitive nootropics', 'Citicoline, L-theanine and Alpha-GPC'],
+      ['650 mg', 'Ionized electrolytes', 'Sodium, potassium and magnesium'],
+      ['2.5 g', 'Nano-peptides', 'Low-weight collagen for joints and tissue'],
+      ['180 mg', 'Natural caffeine', 'Green coffee bean and guayusa'],
+      ['300 mg', 'Adaptogen matrix', 'Rhodiola and cordyceps'],
+      ['0 g', 'Sugar', 'Sweetened with monk fruit']
+    ];
+
+    function Benefits() {
+      const ref = useRef(null);
+      useRise(ref);
+      return (
+        <section id="benefits" ref={ref} className="relative min-h-[200vh] pt-[30vh] pb-[40vh] on-liquid">
+          <div className="mx-auto max-w-6xl px-5 md:px-8">
+            <h2 className="rise font-display text-[clamp(2.2rem,6vw,5rem)] font-bold leading-[.98] tracking-tight max-w-3xl">Everything<br />in the pour.</h2>
+            <div className="grid md:grid-cols-3 gap-10 mt-16">
+              {BENEFITS.map((b, i) => (
+                <div key={b.title} className="rise" style={{ '--i': i }}>
+                  <h3 className="font-display text-lg font-semibold">{b.title}</h3>
+                  <p className="mt-3 text-white/75 leading-relaxed">{b.text}</p>
+                </div>
+              ))}
+            </div>
+            <ul className="mt-[22vh]">
+              {INGREDIENTS.map(([dose, name, detail], i) => (
+                <li key={name} className="rise ing-row grid grid-cols-[minmax(6.5rem,auto)_1fr] md:grid-cols-[14rem_1fr_1fr] gap-x-6 gap-y-1 py-6 items-baseline" style={{ '--i': i % 3 }}>
+                  <span className="font-display text-2xl md:text-4xl font-bold tabular-nums">{dose}</span>
+                  <span className="font-semibold text-lg">{name}</span>
+                  <span className="text-white/65 col-start-2 md:col-start-3">{detail}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      );
+    }
+
+    function Radar({ profile }) {
+      const labels = Object.keys(profile);
+      const vals = useTweened(labels.map(k => profile[k]));
+      const c = 120, R = 82;
+      const pt = (i, v) => { const a = -Math.PI / 2 + (i * 2 * Math.PI) / labels.length; return [c + Math.cos(a) * R * v / 100, c + Math.sin(a) * R * v / 100]; };
+      return (
+        <svg viewBox="-24 0 288 240" className="w-full max-w-[280px]" role="img" aria-label={`Performance profile: ${labels.map(l => `${l} ${profile[l]}`).join(', ')}`}>
+          {[25, 50, 75, 100].map(g => <polygon key={g} points={labels.map((_, i) => pt(i, g).join(',')).join(' ')} fill="none" stroke="rgba(255,255,255,0.08)" />)}
+          {labels.map((_, i) => { const [x, y] = pt(i, 100); return <line key={i} x1={c} y1={c} x2={x} y2={y} stroke="rgba(255,255,255,0.08)" />; })}
+          <polygon points={vals.map((v, i) => pt(i, v).join(',')).join(' ')} className="radar-shape" />
+          {vals.map((v, i) => { const [x, y] = pt(i, v); return <circle key={i} cx={x} cy={y} r="3" className="radar-dot" />; })}
+          {labels.map((l, i) => { const [x, y] = pt(i, 124); return <text key={l} x={x} y={y} textAnchor="middle" dominantBaseline="middle" className="radar-label">{l}</text>; })}
+        </svg>
+      );
+    }
+
+    function Flavors({ flavor, onSelect }) {
+      const f = FLAVORS[flavor];
+      return (
+        <section id="flavors" className="relative min-h-screen flex items-center py-28">
+          <div className="mx-auto max-w-7xl w-full px-5 md:px-8 grid md:grid-cols-12">
+            <div className="md:col-start-6 md:col-span-7 lg:col-start-7 lg:col-span-6">
+              <div role="tablist" aria-label="Flavors" className="flex flex-wrap gap-2">
+                {FLAVORS.map((x, i) => (
+                  <button key={x.id} role="tab" id={`tab-${x.id}`} aria-controls="flavor-panel" aria-selected={i === flavor}
+                    onClick={() => onSelect(i)} className="tab-btn" style={{ '--c': x.hex }}>
+                    <span className="swatch" /> {x.name}
+                  </button>
+                ))}
+              </div>
+              <article id="flavor-panel" role="tabpanel" aria-labelledby={`tab-${f.id}`} className="glass-panel mt-5 p-6 md:p-9">
+                <div key={f.id} className="panel-swap">
+                  <h2 className="font-display text-3xl md:text-5xl font-bold accent-text leading-[1.02]">{f.name.toUpperCase()}</h2>
+                  <p className="mt-3 text-white/80">{f.tagline} <span className="text-white/50">Tuned for {f.focus}.</span></p>
+                  <p className="mt-5 text-white/60 leading-relaxed max-w-prose">{f.blurb}</p>
+                </div>
+                <div className="mt-6 flex justify-center sm:justify-start"><Radar profile={f.profile} /></div>
+              </article>
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    function MagneticButton({ children, type = 'button' }) {
+      const btn = useRef(null), inner = useRef(null);
+      const move = (e) => {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        const r = btn.current.getBoundingClientRect();
+        const x = e.clientX - (r.left + r.width / 2), y = e.clientY - (r.top + r.height / 2);
+        gsap.to(btn.current, { x: x * 0.35, y: y * 0.45, duration: 0.5, ease: 'power3.out' });
+        gsap.to(inner.current, { x: x * 0.15, y: y * 0.2, duration: 0.5, ease: 'power3.out' });
+        btn.current.style.setProperty('--sx', `${e.clientX - r.left}px`);
+        btn.current.style.setProperty('--sy', `${e.clientY - r.top}px`);
+      };
+      const leave = () => gsap.to([btn.current, inner.current], { x: 0, y: 0, duration: 0.9, ease: 'elastic.out(1, 0.35)' });
+      return (
+        <span className="magnet-zone" onPointerMove={move} onPointerLeave={leave}>
+          <button ref={btn} type={type} className="magnetic"><span ref={inner} className="relative z-10 flex items-center gap-3">{children}</span></button>
+        </span>
+      );
+    }
+
+    function Order({ flavor }) {
+      const [email, setEmail] = useState('');
+      const [status, setStatus] = useState('idle');
+      const submit = (e) => {
+        e.preventDefault();
+        setStatus(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? 'done' : 'error');
+      };
+      return (
+        <section id="order" className="relative min-h-screen flex flex-col justify-end">
+          <div className="mx-auto max-w-4xl w-full px-5 md:px-8 text-center pb-16">
+            <h2 className="cta-title font-display">FEEL THE<br />KINETIC SHIFT</h2>
+            {status === 'done' ? (
+              <p className="mt-10 inline-flex items-center gap-3 text-white/80" role="status">
+                <span className="accent-text"><Icon name="check" size={22} strokeWidth={2.4} /></span>
+                You're on the waitlist. We'll email {email} before the first {FLAVORS[flavor].name} drop.
+              </p>
+            ) : (
+              <form onSubmit={submit} noValidate className="mt-10 mx-auto max-w-xl flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <div className="flex-1 text-left">
+                  <label htmlFor="email" className="sr-only">Email address</label>
+                  <input id="email" type="email" autoComplete="email" placeholder="you@domain.com" value={email}
+                    onChange={(e) => { setEmail(e.target.value); if (status === 'error') setStatus('idle'); }}
+                    aria-invalid={status === 'error'} aria-describedby={status === 'error' ? 'email-err' : undefined} className="field" />
+                  {status === 'error' && <p id="email-err" className="text-xs mt-2 pl-5" style={{ color: '#ff6b8f' }}>Enter an email address like name@domain.com.</p>}
+                </div>
+                <MagneticButton type="submit">Join the waitlist <Icon name="arrowRight" size={18} strokeWidth={2.2} /></MagneticButton>
+              </form>
+            )}
+          </div>
+          <footer className="pb-28 pt-6 text-center text-xs text-white/35 px-5">© 2026 Aura Kinetix. Concept prototype; the brand and product are fictional.</footer>
+        </section>
+      );
+    }
+
+    function Dock({ flavor, onSelect, turbo, onTurbo }) {
+      return (
+        <div className="fixed bottom-5 inset-x-0 z-40 flex justify-center pointer-events-none">
+          <div className="dock glass pointer-events-auto">
+            <div className="dock-tabs" role="tablist" aria-label="Choose flavor">
+              <span className="dock-indicator" style={{ transform: `translateX(${flavor * 100}%)` }} />
+              {FLAVORS.map((f, i) => (
+                <button key={f.id} role="tab" aria-selected={i === flavor} aria-label={f.name} title={f.name}
+                  onClick={() => onSelect(i)} className="dock-item" style={{ '--c': f.hex }}>
+                  <span className="swatch" />
+                </button>
+              ))}
+            </div>
+            <span className="dock-sep" />
+            <button className={`dock-turbo ${turbo ? 'on' : ''}`} onClick={onTurbo} aria-pressed={turbo} aria-label="Turbo mode" title="Turbo mode (T)">
+              <Icon name="zap" size={18} strokeWidth={2.2} />
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      const [flavor, setFlavor] = useState(0);
+      const [turbo, setTurbo] = useState(false);
+      const [sound, setSound] = useState(true);
+      const soundRef = useRef(sound);
+      soundRef.current = sound;
+
+      useEffect(() => {
+        const eng = window.__aura;
+        if (eng) {
+          eng.bindScroll();
+          eng.onPop = () => { if (soundRef.current) window.AuraAudio.fizz(); };
+        }
+        const t = setTimeout(() => { document.body.classList.add('loaded'); if (window.ScrollTrigger) ScrollTrigger.refresh(); }, 500);
+        if (document.fonts) document.fonts.ready.then(() => window.ScrollTrigger && ScrollTrigger.refresh());
+        return () => clearTimeout(t);
+      }, []);
+
+      useEffect(() => { if (window.__aura) window.__aura.setFlavor(flavor); }, [flavor]);
+      useEffect(() => { document.body.classList.toggle('turbo', turbo); if (window.__aura) window.__aura.setTurbo(turbo); }, [turbo]);
+
+      const selectFlavor = (i) => { if (i === flavor) return; if (sound) window.AuraAudio.blip(i); setFlavor(i); };
+      const toggleTurbo = () => {
+        const next = !turbo;
+        setTurbo(next);
+        if (sound) window.AuraAudio.burst(next);
+        const b = document.body;
+        b.classList.remove('shock'); void b.offsetWidth; b.classList.add('shock');
+        setTimeout(() => b.classList.remove('shock'), 800);
+      };
+
+      useEffect(() => {
+        const onKey = (e) => {
+          if (e.target.closest && e.target.closest('input, textarea')) return;
+          if (['1', '2', '3'].includes(e.key)) selectFlavor(Number(e.key) - 1);
+          if (e.key.toLowerCase() === 't') toggleTurbo();
+        };
+        addEventListener('keydown', onKey);
+        return () => removeEventListener('keydown', onKey);
+      });
+
+      return (
+        <>
+          <BackdropType />
+          <Nav sound={sound} onSound={() => setSound(s => !s)} />
+          <main>
+            <Hero />
+            <Benefits />
+            <Flavors flavor={flavor} onSelect={selectFlavor} />
+            <Order flavor={flavor} />
+          </main>
+          <Dock flavor={flavor} onSelect={selectFlavor} turbo={turbo} onTurbo={toggleTurbo} />
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>
